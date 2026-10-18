@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+  }
+  h1, h2, .font-serif-display {
+    font-family: var(--font-display);
+  }
+}
+
+.checkerboard-bg {
+  background-color: #f5f4f0;
+  background-image: 
+    linear-gradient(45deg, #e7e5e0 25%, transparent 25%), 
+    linear-gradient(-45deg, #e7e5e0 25%, transparent 25%), 
+    linear-gradient(45deg, transparent 75%, #e7e5e0 75%), 
+    linear-gradient(-45deg, transparent 75%, #e7e5e0 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}

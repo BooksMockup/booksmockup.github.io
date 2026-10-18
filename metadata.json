@@ -1,0 +1,6 @@
+{
+  "name": "DIY Book Covers — 3D Book Mockup Maker",
+  "description": "Free online 3D book cover mockup generator for authors and publishers. Transform 2D flat book covers and spines into high-resolution Single and Composite 3D product shots in seconds.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
