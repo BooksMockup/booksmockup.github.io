@@ -273,7 +273,7 @@ export default function App() {
               className="text-xl sm:text-2xl font-bold tracking-tight text-stone-900 font-serif-display whitespace-nowrap shrink-0 flex items-center gap-2.5"
             >
               <img
-                src="/favicon.png"
+                src="./favicon.png"
                 alt="Books Mockup Logo"
                 referrerPolicy="no-referrer"
                 className="w-8 h-8 rounded-lg object-contain shadow-2xs shrink-0"

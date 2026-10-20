@@ -43,15 +43,35 @@ let webglUnavailable = false;
 
 function getSharedStudio(): StudioContext | null {
   if (webglUnavailable) return null;
-  if (sharedStudio) return sharedStudio;
+  if (sharedStudio) {
+    try {
+      const gl = sharedStudio.renderer.getContext();
+      if (gl && !gl.isContextLost()) {
+        return sharedStudio;
+      }
+      sharedStudio.renderer.dispose();
+    } catch {
+      // Recreate below
+    }
+    sharedStudio = null;
+  }
 
   try {
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-      preserveDrawingBuffer: true,
-      powerPreference: 'high-performance',
-    });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+        preserveDrawingBuffer: true,
+        powerPreference: 'high-performance',
+      });
+    } catch {
+      renderer = new THREE.WebGLRenderer({
+        antialias: false,
+        alpha: true,
+        preserveDrawingBuffer: true,
+      });
+    }
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.NoToneMapping;
     renderer.shadowMap.enabled = false;
@@ -1011,13 +1031,12 @@ const STUDIO_FLOOR_FRAGMENT_SHADER = /* glsl */ `
            boxShadow1D(localPos.y, halfSpan.y, sigma.y);
   }
 
-  float evaluateCasterShadow(int idx, vec2 p) {
-    vec2 center = uCenterHalf[idx].xy;
-    vec2 halfSize = uCenterHalf[idx].zw;
-    vec2 uAxis = uAxes[idx].xy;
-    vec2 vAxis = uAxes[idx].zw;
-    vec2 castDir = uCastParams[idx].xy;
-    float mode = uCastParams[idx].w;
+  float evaluateCasterShadow(vec4 centerHalf, vec4 axes, vec4 castParams, vec2 p) {
+    vec2 center = centerHalf.xy;
+    vec2 halfSize = centerHalf.zw;
+    vec2 uAxis = axes.xy;
+    vec2 vAxis = axes.zw;
+    float mode = castParams.w;
 
     vec2 d = p - center;
     vec2 local = vec2(dot(d, uAxis), dot(d, vAxis));
@@ -1087,7 +1106,7 @@ const STUDIO_FLOOR_FRAGMENT_SHADER = /* glsl */ `
     float transmittance = 1.0;
     for (int i = 0; i < 8; i++) {
       if (i >= uCasterCount) break;
-      float sh = evaluateCasterShadow(i, vWorldXZ);
+      float sh = evaluateCasterShadow(uCenterHalf[i], uAxes[i], uCastParams[i], vWorldXZ);
       transmittance *= (1.0 - sh);
     }
 
